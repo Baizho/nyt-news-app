@@ -16,7 +16,7 @@ export default function Home() {
 
   const fetchArticles = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/articles');
+      const response = await axios.get('https://nyt-news-app-back.vercel.app/api/articles');
       setArticles(response.data);
     } catch (error) {
       console.error('Error fetching articles:', error);
@@ -28,7 +28,7 @@ export default function Home() {
   useEffect(() => {
     fetchArticles();
 
-    const socket = io('http://localhost:5000');
+    const socket = io('https://nyt-news-app-back.vercel.app');
     socket.on('newArticle', (newArticle: Article) => {
       setArticles([newArticle]);
     });
