@@ -82,7 +82,7 @@ const fetchArticles = async () => {
   }
 };
 
-cron.schedule('*0 * * * *', fetchArticles); // Run every 15 seconds
+cron.schedule('0 * * * *', fetchArticles); // Run every 15 seconds
 
 app.get('/api/articles', async (req, res) => {
   try {
