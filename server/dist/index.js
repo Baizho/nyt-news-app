@@ -21,7 +21,7 @@ const io = new socket_io_1.Server(server, {
     }
 });
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3000"
+    origin: "https://nyt-news-app-back.vercel.app/"
 }));
 app.use(express_1.default.json());
 mongoose_1.default.connect('mongodb+srv://arl:arl@cluster1.unitqkr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1').then(() => {
@@ -71,7 +71,7 @@ const fetchArticles = async () => {
         console.error('Error fetching articles:', error);
     }
 };
-node_cron_1.default.schedule('0 * * * *', fetchArticles); // Run every 15 seconds
+node_cron_1.default.schedule('0 * * * *', fetchArticles);
 app.get('/api/articles', async (req, res) => {
     try {
         const articles = await Article.find().sort({ published_date: -1 }).limit(5);
@@ -84,5 +84,5 @@ app.get('/api/articles', async (req, res) => {
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    fetchArticles(); // Initial scrape when server starts
+    fetchArticles(); 
 });
