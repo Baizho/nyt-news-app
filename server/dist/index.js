@@ -21,7 +21,7 @@ const io = new socket_io_1.Server(server, {
     }
 });
 app.use((0, cors_1.default)({
-    origin: "https://nyt-news-app-back.vercel.app/"
+    origin: "https://nyt-news-app-six.vercel.app"
 }));
 app.use(express_1.default.json());
 mongoose_1.default.connect('mongodb+srv://arl:arl@cluster1.unitqkr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1').then(() => {
