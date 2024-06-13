@@ -12,13 +12,13 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "nyt-news-app-six.vercel.app",
+    origin: "https://nyt-news-app-six.vercel.app",
     methods: ["GET", "POST"]
   }
 });
 
 app.use(cors({
-  origin: "http://localhost:3000"
+  origin: "https://nyt-news-app-six.vercel.app"
 }));
 app.use(express.json());
 
