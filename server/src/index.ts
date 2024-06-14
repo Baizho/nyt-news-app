@@ -10,15 +10,8 @@ import mongoose from 'mongoose';
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "https://nyt-news-app-articles.vercel.app",
-  }
-});
+const io = new Server(server);
 
-app.use(cors({
-  origin: "https://nyt-news-app-articles.vercel.app"
-}));
 app.use(express.json());
 
 mongoose.connect('mongodb+srv://bossnurmyrza:JwdfOtPpTmGOb00h@cluster2.ocucg7c.mongodb.net/').then(() => {
