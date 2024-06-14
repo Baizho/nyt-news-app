@@ -65,7 +65,7 @@ io.on("connect", (socket) => {
   
       if (articles.length > 0) {
         await Article.insertMany(articles);
-        articles.forEach(article => socket.emit('newArticle', article));
+        socket.emit('newArticle', articles)
         console.log('Articles fetched and saved.');
       } else {
         console.error('No articles were found. Check the CSS selectors.');
