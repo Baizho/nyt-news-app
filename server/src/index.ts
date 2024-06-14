@@ -74,7 +74,7 @@ io.on("connect", (socket) => {
       console.error('Error fetching articles:', error);
     }
   };
-  
+  fetchArticles();
   cron.schedule('0 * * * *', fetchArticles); // Run every 15 seconds
 })
 
