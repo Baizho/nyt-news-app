@@ -34,13 +34,12 @@ export default function Home() {
         </h1>
       </header>
       <main className="max-w-4xl mx-auto mt-10">
-        <div className="text-center mb-4"></div>
         {articles.length > 0 ? (
           articles.map((article, index) => (
             <Link
               href={article.url}
               key={index}
-              className="bg-white p-5 shadow-md rounded-lg mb-5 w-full"
+              className="bg-white p-5 shadow-md rounded-lg mb-5"
             >
               <h2 className="text-2xl font-semibold mb-2">{article.title}</h2>
               <p className="text-gray-700 mb-4">{article.abstract}</p>
