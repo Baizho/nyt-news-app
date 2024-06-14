@@ -36,45 +36,47 @@ interface Article {
   published_date: Date;
 }
 
-const fetchArticles = async () => {
-  try {
-    const response = await axios.get('https://www.nytimes.com/international/section/technology');
-    const html = response.data;
-    const $ = cheerio.load(html);
-
-    const articles: Article[] = [];
-    const elements = $('.css-18yolpw').slice(0, 10); 
-
-    elements.each((index, element) => {
-      const title = $(element).find('h3').text();
-      const url = $(element).find('a').attr('href');
-      const abstract = $(element).find('p').text();
-      const published_date = new Date();
-
-      if (title && url && abstract) {
-        const article: Article = {
-          title,
-          url: `https://www.nytimes.com${url}`,
-          abstract,
-          published_date,
-        };
-        articles.push(article);
+io.on("connect", (socket) => {
+  const fetchArticles = async () => {
+    try {
+      const response = await axios.get('https://www.nytimes.com/international/section/technology');
+      const html = response.data;
+      const $ = cheerio.load(html);
+  
+      const articles: Article[] = [];
+      const elements = $('.css-18yolpw').slice(0, 10); 
+  
+      elements.each((index, element) => {
+        const title = $(element).find('h3').text();
+        const url = $(element).find('a').attr('href');
+        const abstract = $(element).find('p').text();
+        const published_date = new Date();
+  
+        if (title && url && abstract) {
+          const article: Article = {
+            title,
+            url: `https://www.nytimes.com${url}`,
+            abstract,
+            published_date,
+          };
+          articles.push(article);
+        }
+      });
+  
+      if (articles.length > 0) {
+        await Article.insertMany(articles);
+        articles.forEach(article => socket.emit('newArticle', article));
+        console.log('Articles fetched and saved.');
+      } else {
+        console.error('No articles were found. Check the CSS selectors.');
       }
-    });
-
-    if (articles.length > 0) {
-      await Article.insertMany(articles);
-      articles.forEach(article => io.emit('newArticle', article));
-      console.log('Articles fetched and saved.');
-    } else {
-      console.error('No articles were found. Check the CSS selectors.');
+    } catch (error) {
+      console.error('Error fetching articles:', error);
     }
-  } catch (error) {
-    console.error('Error fetching articles:', error);
-  }
-};
-
-cron.schedule('0 * * * *', fetchArticles); // Run every 15 seconds
+  };
+  
+  cron.schedule('0 * * * *', fetchArticles); // Run every 15 seconds
+})
 
 app.get('/api/articles', async (req, res) => {
   try {
@@ -90,5 +92,4 @@ app.get('/api/articles', async (req, res) => {
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  fetchArticles(); // Initial scrape when server starts
 });
