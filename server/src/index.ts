@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import axios from 'axios';
 import cheerio from 'cheerio';
 import cors from 'cors';
@@ -7,24 +6,25 @@ import http from 'http';
 import { Server } from 'socket.io';
 import 'dotenv/config';
 import cron from 'node-cron';
+import mongoose from 'mongoose';
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://nyt-news-app-six.vercel.app",
+    origin: "*",
     methods: ["GET", "POST"]
   }
 });
 
 app.use(cors({
-  origin: "https://nyt-news-app-six.vercel.app"
+  origin: "*"
 }));
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://arl:arl@cluster1.unitqkr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1').then(() => {
+mongoose.connect('mongodb+srv://bossnurmyrza:JwdfOtPpTmGOb00h@cluster2.ocucg7c.mongodb.net/').then(() => {
   console.log("MongoDB connected");
-}).catch((error) => {
+}).catch((error: any) => {
   console.error("MongoDB connection error:", error);
 });
 
@@ -46,12 +46,12 @@ interface Article {
 
 const fetchArticles = async () => {
   try {
-    const response = await axios.get('https://www.nytimes.com/section/world');
+    const response = await axios.get('https://www.nytimes.com/international/section/technology');
     const html = response.data;
     const $ = cheerio.load(html);
 
     const articles: Article[] = [];
-    const elements = $('.css-18yolpw').slice(0, 5); 
+    const elements = $('.css-18yolpw').slice(0, 10); 
 
     elements.each((index, element) => {
       const title = $(element).find('h3').text();
