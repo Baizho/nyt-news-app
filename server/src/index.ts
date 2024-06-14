@@ -10,7 +10,16 @@ import mongoose from 'mongoose';
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "https://nyt-news-app-articles.vercel.app/",
+    methods: ["GET", "POST"]
+  }
+});
+
+app.use(cors({
+  origin: "https://nyt-news-app-articles.vercel.app/"
+}));
 
 app.use(express.json());
 
@@ -36,47 +45,45 @@ interface Article {
   published_date: Date;
 }
 
-io.on("connect", (socket) => {
-  const fetchArticles = async () => {
-    try {
-      const response = await axios.get('https://www.nytimes.com/international/section/technology');
-      const html = response.data;
-      const $ = cheerio.load(html);
-  
-      const articles: Article[] = [];
-      const elements = $('.css-18yolpw').slice(0, 10); 
-  
-      elements.each((index, element) => {
-        const title = $(element).find('h3').text();
-        const url = $(element).find('a').attr('href');
-        const abstract = $(element).find('p').text();
-        const published_date = new Date();
-  
-        if (title && url && abstract) {
-          const article: Article = {
-            title,
-            url: `https://www.nytimes.com${url}`,
-            abstract,
-            published_date,
-          };
-          articles.push(article);
-        }
-      });
-  
-      if (articles.length > 0) {
-        await Article.insertMany(articles);
-        socket.emit('newArticle', articles)
-        console.log('Articles fetched and saved.');
-      } else {
-        console.error('No articles were found. Check the CSS selectors.');
+const fetchArticles = async () => {
+  try {
+    const response = await axios.get('https://www.nytimes.com/international/section/technology');
+    const html = response.data;
+    const $ = cheerio.load(html);
+
+    const articles: Article[] = [];
+    const elements = $('.css-18yolpw').slice(0, 10); 
+
+    elements.each((index, element) => {
+      const title = $(element).find('h3').text();
+      const url = $(element).find('a').attr('href');
+      const abstract = $(element).find('p').text();
+      const published_date = new Date();
+
+      if (title && url && abstract) {
+        const article: Article = {
+          title,
+          url: `https://www.nytimes.com${url}`,
+          abstract,
+          published_date,
+        };
+        articles.push(article);
       }
-    } catch (error) {
-      console.error('Error fetching articles:', error);
+    });
+
+    if (articles.length > 0) {
+      await Article.insertMany(articles);
+      io.emit('newArticle', articles)
+      // console.log('Articles fetched and saved.');
+    } else {
+      console.error('No articles were found. Check the CSS selectors.');
     }
-  };
-  fetchArticles();
-  cron.schedule('0 * * * *', fetchArticles); // Run every 15 seconds
-})
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+  }
+};
+cron.schedule('1 * * * *', fetchArticles); 
+setInterval(fetchArticles, 1000);
 
 app.get('/api/articles', async (req, res) => {
   try {
