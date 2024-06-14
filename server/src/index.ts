@@ -13,7 +13,6 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "https://nyt-news-app-articles.vercel.app",
-    methods: ["GET", "POST"]
   }
 });
 
