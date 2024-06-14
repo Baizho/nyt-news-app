@@ -89,7 +89,7 @@ app.get('/api/articles', async (req, res) => {
     const articles = await Article.find().sort({ published_date: -1 }).limit(5);
     res.json(articles);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Errr' });
   }
 });
 

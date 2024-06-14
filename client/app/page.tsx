@@ -16,14 +16,10 @@ export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    const socket = io("https://nyt-news-app-phi.vercel.app");
+    const socket = io("https://nyt-news-app-phi.vercel.app/api/articles");
     socket.on("newArticle", (newArticle: Article) => {
       setArticles([newArticle]);
     });
-
-    return () => {
-      socket.disconnect();
-    };
   }, []);
 
   return (
